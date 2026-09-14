@@ -1,40 +1,41 @@
-# Bot de Auto Compra para Amazon v2.1
+# Bot de Auto Compra para Amazon v2.2
 
-Un bot automatizado creado en Python con Selenium para monitorear el stock de un producto en Amazon y comprarlo automáticamente en cuanto esté disponible. Incluye múltiples estrategias de compra y notificaciones por Discord.
+Un bot automatizado creado en Python con Selenium para monitorear el stock de un producto en Amazon y comprarlo automáticamente en cuanto esté disponible. Soporta ejecución con interfaz gráfica y **modo servidor headless (sin pantalla)** con un **Dashboard Web en vivo**.
 
 ## Características
 
-- **Monitoreo continuo de stock** — Refresca la página del producto cada 5 segundos hasta detectar disponibilidad.
-- **Compra directa con "Comprar ahora"** — Detecta y hace clic en el botón de compra inmediata en cuanto aparece.
-- **Búsqueda de opciones alternativas** — Si el botón principal no está disponible, busca automáticamente en "Otras opciones de compra" y vendedores alternativos.
-- **Confirmación automática del pedido** — Navega por el checkout y confirma el pedido con reintentos inteligentes (hasta 3 intentos con espera progresiva).
-- **Flujo completo carrito → checkout** — Si compra desde un vendedor alternativo, agrega al carrito, procede al checkout y confirma automáticamente.
-- **Notificaciones por Discord** — Opción de ingresar la URL de un Webhook de Discord para recibir alertas en tiempo real (inicio, detección de stock, compra exitosa o errores).
-- **Ventana de instrucciones** — Al iniciar muestra un diálogo visual con los pasos a seguir.
-- **Compatibilidad con Amazon en español e inglés** — Los selectores soportan ambos idiomas.
+- **Modo Servidor Headless** — Opción de ejecutarse en servidores Linux/Windows VPS sin interfaz gráfica o sin abrir la ventana del navegador Chrome (`--headless=new`).
+- **Dashboard Web de Estado en Vivo** — Servidor web liviano integrado en el puerto `8080` (ej: `http://localhost:8080` o `http://TU_IP:8080`) que muestra en tiempo real:
+  - Estado del proceso (Monitoreando, Comprando, Exitoso, Error).
+  - Contador de chequeos realizados.
+  - Hora de la última verificación.
+  - Registros/Logs de eventos en vivo.
+- **Notificaciones por Discord** — Integración nativa con Webhook de Discord para enviar alertas automáticas y reportes periódicos (heartbeats de estado).
+- **Persistencia de Sesión de Amazon** — Guarda y reutiliza las cookies y perfil de usuario en `./chrome_profile` para mantener la sesión iniciada incluso entre reinicios del bot o en servidores headless.
+- **Monitoreo continuo de stock** — Refresca la página cada 5 segundos hasta detectar disponibilidad.
+- **Múltiples estrategias de compra** — "Comprar ahora" directo, "Otras opciones de compra" y checkout automático desde el carrito.
+- **Reintentos inteligentes de confirmación** — Reintenta la confirmación del pedido progresivamente si Amazon tarda en procesar.
+- **Compatibilidad bilingüe** — Funciona en Amazon en español e inglés.
 
 ## Cómo Usarlo
 
-### Opción 1: Usar el ejecutable (Recomendado para usuarios sin Python)
+### Opción 1: Usar el ejecutable (Recomendado)
 
 Descarga el archivo `AmazonAutoCompra.exe` y haz doble clic en él.
 
-1. Al abrirlo, verás una ventana con las instrucciones.
-2. Pega el enlace del artículo de Amazon en la consola y presiona ENTER.
-3. (Opcional) Pega la URL de tu Webhook de Discord o presiona ENTER para omitir.
-4. Se abrirá Google Chrome. **Inicia sesión en tu cuenta de Amazon** ahí mismo.
-5. Resuelve cualquier CAPTCHA que aparezca.
-6. Asegúrate de tener configurados tu **método de pago** y **dirección de envío** predeterminados.
-7. Vuelve a la consola y presiona ENTER para iniciar el monitoreo.
-
-El bot comenzará a refrescar la página y comprará el producto automáticamente en cuanto detecte disponibilidad.
+1. Selecciona el modo de ejecución:
+   - **N** (por defecto): Modo normal con ventana de Chrome para iniciar sesión visualmente.
+   - **S**: Modo Servidor Headless (sin ventana gráfica).
+2. Pega el enlace (URL) del artículo de Amazon y presiona ENTER.
+3. (Opcional) Pega la URL de tu Webhook de Discord para notificaciones.
+4. Si estás en modo normal, inicia sesión en la ventana de Chrome que se abrirá.
+5. Vuelve a la consola y presiona ENTER para comenzar el monitoreo.
+6. Abre tu navegador y accede a `http://localhost:8080` para ver el **Dashboard de Estado en Vivo**.
 
 ### Opción 2: Desde el código fuente
 
-Si eres desarrollador y quieres ejecutar o modificar el código:
-
-1. Asegúrate de tener **Python 3.8+** y **Google Chrome** instalados.
-2. Instala las dependencias:
+1. Instala Python 3.8+ y Google Chrome.
+2. Instala dependencias:
    ```bash
    pip install -r requirements.txt
    ```
@@ -43,26 +44,18 @@ Si eres desarrollador y quieres ejecutar o modificar el código:
    python bot.py
    ```
 
+## Panel de Estado Web (Dashboard)
+
+Al iniciar el bot, se levantará automáticamente un servidor web en el puerto `8080`:
+- **URL Local**: `http://localhost:8080`
+- **URL Servidor Remote**: `http://<IP_DE_TU_SERVIDOR>:8080`
+- **API Status JSON**: `http://localhost:8080/api/status`
+
 ## Requisitos
 
 - Google Chrome instalado en el sistema.
 - Conexión a internet estable.
 - Cuenta de Amazon con método de pago y dirección configurados.
-
-## Dependencias
-
-- `selenium` — Automatización del navegador.
-- `webdriver-manager` — Gestión automática del driver de Chrome.
-
-## Estrategias de Compra
-
-El bot utiliza un sistema de múltiples estrategias para maximizar las probabilidades de completar la compra:
-
-1. **Botón "Comprar ahora"** — Primera prioridad. Busca el botón directo de compra inmediata.
-2. **Otras opciones de compra** — Si el botón principal no está, busca vendedores alternativos en el panel de ofertas.
-3. **Checkout desde carrito** — Si compra desde ofertas alternativas, completa el flujo a través del carrito de compras.
-
-Cada estrategia incluye múltiples selectores CSS y XPath para adaptarse a las variaciones de la interfaz de Amazon.
 
 ## Advertencia
 
