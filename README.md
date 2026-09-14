@@ -1,6 +1,6 @@
-# Bot de Auto Compra para Amazon v2.0
+# Bot de Auto Compra para Amazon v2.1
 
-Un bot automatizado creado en Python con Selenium para monitorear el stock de un producto en Amazon y comprarlo automáticamente en cuanto esté disponible. Incluye múltiples estrategias de compra para maximizar las posibilidades de éxito.
+Un bot automatizado creado en Python con Selenium para monitorear el stock de un producto en Amazon y comprarlo automáticamente en cuanto esté disponible. Incluye múltiples estrategias de compra y notificaciones por Discord.
 
 ## Características
 
@@ -9,6 +9,7 @@ Un bot automatizado creado en Python con Selenium para monitorear el stock de un
 - **Búsqueda de opciones alternativas** — Si el botón principal no está disponible, busca automáticamente en "Otras opciones de compra" y vendedores alternativos.
 - **Confirmación automática del pedido** — Navega por el checkout y confirma el pedido con reintentos inteligentes (hasta 3 intentos con espera progresiva).
 - **Flujo completo carrito → checkout** — Si compra desde un vendedor alternativo, agrega al carrito, procede al checkout y confirma automáticamente.
+- **Notificaciones por Discord** — Opción de ingresar la URL de un Webhook de Discord para recibir alertas en tiempo real (inicio, detección de stock, compra exitosa o errores).
 - **Ventana de instrucciones** — Al iniciar muestra un diálogo visual con los pasos a seguir.
 - **Compatibilidad con Amazon en español e inglés** — Los selectores soportan ambos idiomas.
 
@@ -20,10 +21,11 @@ Descarga el archivo `AmazonAutoCompra.exe` y haz doble clic en él.
 
 1. Al abrirlo, verás una ventana con las instrucciones.
 2. Pega el enlace del artículo de Amazon en la consola y presiona ENTER.
-3. Se abrirá Google Chrome. **Inicia sesión en tu cuenta de Amazon** ahí mismo.
-4. Resuelve cualquier CAPTCHA que aparezca.
-5. Asegúrate de tener configurados tu **método de pago** y **dirección de envío** predeterminados.
-6. Vuelve a la consola y presiona ENTER para iniciar el monitoreo.
+3. (Opcional) Pega la URL de tu Webhook de Discord o presiona ENTER para omitir.
+4. Se abrirá Google Chrome. **Inicia sesión en tu cuenta de Amazon** ahí mismo.
+5. Resuelve cualquier CAPTCHA que aparezca.
+6. Asegúrate de tener configurados tu **método de pago** y **dirección de envío** predeterminados.
+7. Vuelve a la consola y presiona ENTER para iniciar el monitoreo.
 
 El bot comenzará a refrescar la página y comprará el producto automáticamente en cuanto detecte disponibilidad.
 

@@ -1,5 +1,6 @@
 import time
 import json
+import urllib.request
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -10,6 +11,40 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import tkinter as tk
 from tkinter import messagebox
 
+
+# ============================================================
+#  DISCORD WEBHOOK NOTIFICATIONS
+# ============================================================
+
+def enviar_discord(webhook_url, titulo, descripcion, color=0x00FF00, url_producto=""):
+    """Envía una notificación a Discord usando un webhook."""
+    if not webhook_url:
+        return
+
+    embed = {
+        "title": titulo,
+        "description": descripcion,
+        "color": color,
+        "footer": {"text": "AmazonAutoCompra Bot v2.1"},
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    if url_producto:
+        embed["url"] = url_producto
+
+    payload = json.dumps({"embeds": [embed]}).encode("utf-8")
+
+    req = urllib.request.Request(
+        webhook_url,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "AmazonAutoCompra/2.1"},
+    )
+
+    try:
+        urllib.request.urlopen(req)
+        print("  [Discord] Notificación enviada ✓")
+    except Exception as e:
+        print(f"  [Discord] Error al enviar notificación: {e}")
+
 def mostrar_instrucciones():
     root = tk.Tk()
     root.withdraw() # Oculta la ventana principal
@@ -19,11 +54,12 @@ def mostrar_instrucciones():
         "¡Bienvenido al Bot de Auto Compra para Amazon!\n\n"
         "PASOS A SEGUIR:\n"
         "1. Haz clic en 'Aceptar' en este mensaje.\n"
-        "2. En la ventana negra de fondo, pega el enlace (URL) del articulo de Amazon que quieres buscar y presiona ENTER.\n"
-        "3. Se abrira el navegador Google Chrome. ¡INICIA SESION EN TU CUENTA AHI MISMO!\n"
-        "4. Resuelve los captchas (si los hay) y asegurate de tener una tarjeta y direccion predeterminadas en tu cuenta.\n"
-        "5. Una vez iniciada sesion y viendo la pagina del producto, vuelve a la ventana negra y PRESIONA ENTER de nuevo.\n\n"
-        "El bot comenzara a refrescar la pagina cada 5 segundos y comprara el producto por ti en cuanto aparezca."
+        "2. En la consola, pega el enlace (URL) del artículo de Amazon y presiona ENTER.\n"
+        "3. (Opcional) Pega la URL de tu Webhook de Discord para notificaciones o presiona ENTER para omitir.\n"
+        "4. Se abrirá Google Chrome. ¡INICIA SESIÓN EN TU CUENTA AHÍ MISMO!\n"
+        "5. Resuelve captchas si aparecen y asegúrate de tener tarjeta y dirección predeterminadas.\n"
+        "6. Vuelve a la consola y PRESIONA ENTER para iniciar el monitoreo.\n\n"
+        "El bot refrescará la página cada 5 segundos y comprará el producto por ti automáticamente."
     )
     
     messagebox.showinfo("Instrucciones - Bot de Auto Compra", instrucciones)
@@ -41,7 +77,12 @@ def main():
         print("No ingresaste ningún enlace. Cerrando...")
         input("Presiona Enter para salir...")
         return
-    
+
+    discord_webhook = input("\n(Opcional) Pega la URL del Webhook de Discord para recibir notificaciones (o presiona ENTER para omitir):\n> ").strip()
+
+    if discord_webhook:
+        enviar_discord(discord_webhook, "🤖 Bot Iniciado", f"Iniciando monitoreo de stock en Amazon.\n**Producto:** {url}", color=0x3498DB, url_producto=url)
+
     interval = 5
     selector = "#buy-now-button"
 
@@ -89,6 +130,9 @@ def main():
                         print("¡BOTÓN DE COMPRA ENCONTRADO!")
                         print("*"*30)
 
+                        if discord_webhook:
+                            enviar_discord(discord_webhook, "⚡ Stock Detectado!", "¡Botón 'Comprar ahora' encontrado! Intentando realizar la compra...", color=0xF1C40F, url_producto=url)
+
                         button.click()
                         print("Haciendo clic en Comprar ahora...")
 
@@ -96,9 +140,13 @@ def main():
 
                         if compra_exitosa:
                             print("\n¡¡¡COMPRA COMPLETADA EXITOSAMENTE!!!")
+                            if discord_webhook:
+                                enviar_discord(discord_webhook, "🎉 ¡COMPRA COMPLETADA!", f"El producto fue comprado exitosamente.\n**Producto:** {url}", color=0x2ECC71, url_producto=url)
                             break
                         else:
                             print("No se pudo confirmar el pedido. Volviendo a la página del producto para reintentar...")
+                            if discord_webhook:
+                                enviar_discord(discord_webhook, "⚠️ Falló la Confirmación", "Se hizo clic en comprar pero no se pudo confirmar la orden. Reintentando...", color=0xE67E22, url_producto=url)
                             driver.get(url)
                             time.sleep(3)
                             continue
@@ -113,6 +161,8 @@ def main():
                     compra_exitosa = intentar_otras_opciones(driver, url)
                     if compra_exitosa:
                         print("\n¡¡¡COMPRA COMPLETADA EXITOSAMENTE desde otra opción de compra!!!")
+                        if discord_webhook:
+                            enviar_discord(discord_webhook, "🎉 ¡COMPRA COMPLETADA!", f"El producto fue comprado exitosamente desde otra opción de compra.\n**Producto:** {url}", color=0x2ECC71, url_producto=url)
                         break
                 except Exception as e:
                     print(f"[{time.strftime('%H:%M:%S')}] No se encontraron otras opciones de compra: {e}")
