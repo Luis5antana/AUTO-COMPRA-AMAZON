@@ -44,6 +44,18 @@ Descarga el archivo `AmazonAutoCompra.exe` y haz doble clic en él.
    python bot.py
    ```
 
+## 🔔 ¿Cómo obtener tu Webhook de Discord?
+
+Para recibir notificaciones en tu servidor de Discord:
+
+1. Abre **Discord** e ingresa a tu servidor (o crea uno propio gratis).
+2. Haz clic derecho en el canal de texto donde quieres recibir los avisos (ej: `#notificaciones`).
+3. Selecciona **Editar Canal** (icono de engranaje ⚙️).
+4. Ve a la pestaña **Integraciones** en el menú izquierdo.
+5. Haz clic en **Webhooks** ➔ **Crear Webhook** (o *Nuevo Webhook*).
+6. Haz clic en **Copiar URL del Webhook**.
+7. ¡Pega esa URL en la consola del bot cuando te la pida!
+
 ## Panel de Estado Web (Dashboard)
 
 Al iniciar el bot, se levantará automáticamente un servidor web en el puerto `8080`:
