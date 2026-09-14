@@ -6,6 +6,8 @@ import sys
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from selenium import webdriver
+import selenium.webdriver.chrome.webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -331,7 +333,6 @@ def main():
     selector = "#buy-now-button"
 
     log_event("Iniciando navegador Chrome...")
-    from selenium.webdriver.chrome.options import Options
     options = Options()
     
     # Deshabilitar algunas banderas de automatización para ser menos detectables
