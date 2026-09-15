@@ -4,6 +4,7 @@ import urllib.request
 import os
 import sys
 import threading
+from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from selenium import webdriver
 import selenium.webdriver.chrome.webdriver
@@ -655,7 +656,7 @@ def main():
         while True:
             try:
                 STATUS_DATA["chequeos"] += 1
-                STATUS_DATA["ultima_verificacion"] = time.strftime('%H:%M:%S.%f')[:-3]
+                STATUS_DATA["ultima_verificacion"] = datetime.now().strftime('%H:%M:%S.%f')[:-3]
                 compra_exitosa = False
 
                 # Heartbeat de estado a Discord cada 200 chequeos
