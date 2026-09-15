@@ -1,21 +1,29 @@
-# Bot de Auto Compra para Amazon v2.2
+# Bot de Auto Compra para Amazon Ultra-Fast v3.0
 
-Un bot automatizado creado en Python con Selenium para monitorear el stock de un producto en Amazon y comprarlo automáticamente en cuanto esté disponible. Soporta ejecución con interfaz gráfica y **modo servidor headless (sin pantalla)** con un **Dashboard Web en vivo**.
+Un bot automatizado de alta velocidad creado en Python con Selenium para monitorear el stock de un producto en Amazon y comprarlo automáticamente en cuanto esté disponible. Diseñado para competir eficazmente en **drops de alta demanda y compras ultrarrápidas**.
 
-## Características
+## Novedades en v3.0 (Ultra-Fast Edition)
 
-- **Modo Servidor Headless** — Opción de ejecutarse en servidores Linux/Windows VPS sin interfaz gráfica o sin abrir la ventana del navegador Chrome (`--headless=new`).
-- **Dashboard Web de Estado en Vivo** — Servidor web liviano integrado en el puerto `8080` (ej: `http://localhost:8080` o `http://TU_IP:8080`) que muestra en tiempo real:
-  - Estado del proceso (Monitoreando, Comprando, Exitoso, Error).
-  - Contador de chequeos realizados.
-  - Hora de la última verificación.
-  - Registros/Logs de eventos en vivo.
-- **Notificaciones por Discord** — Integración nativa con Webhook de Discord para enviar alertas automáticas y reportes periódicos (heartbeats de estado).
-- **Persistencia de Sesión de Amazon** — Guarda y reutiliza las cookies y perfil de usuario en `./chrome_profile` para mantener la sesión iniciada incluso entre reinicios del bot o en servidores headless.
-- **Monitoreo continuo de stock** — Refresca la página cada 5 segundos hasta detectar disponibilidad.
-- **Múltiples estrategias de compra** — "Comprar ahora" directo, "Otras opciones de compra" y checkout automático desde el carrito.
-- **Reintentos inteligentes de confirmación** — Reintenta la confirmación del pedido progresivamente si Amazon tarda en procesar.
-- **Compatibilidad bilingüe** — Funciona en Amazon en español e inglés.
+- ⚡ **Motor de Compra Sub-Milisegundo (JS Execution)**: Inyección directa de JavaScript nativo en Chromium para detectar y hacer clic en el botón *"Comprar ahora"* en **< 1ms**, superando los métodos estándar de simulación de ratón de Selenium.
+- 🏎️ **Modo Turbo Speed & Estrategia Eager Loading**:
+  - `page_load_strategy = 'eager'`: Retorna el control en cuanto el DOMHTML básico carga (<200ms) sin esperar imágenes ni rastreadores pesados.
+  - Bloqueo inteligente de imágenes y assets pesados opcional.
+  - Refresco en tiempo real en sub-segundos (0.5s configurable).
+- 🌍 **Soporte Multi-Región de Amazon**: Selección de dominios internacionales integrados:
+  - Amazon USA / Global (`amazon.com`)
+  - Amazon España (`amazon.es`)
+  - Amazon México (`amazon.com.mx`)
+  - Amazon Reino Unido (`amazon.co.uk`)
+  - Amazon Alemania (`amazon.de`)
+  - Amazon Italia (`amazon.it`)
+  - Amazon Francia (`amazon.fr`)
+  - Amazon Canadá (`amazon.ca`)
+  - Amazon Japón (`amazon.co.jp`)
+  - Dominio personalizado editable.
+- 🔐 **Gestión de Login en Headless / Consola (CLI & GUI)**:
+  - En servidores sin interfaz gráfica (Headless), el bot permite iniciar sesión interactivamente mediante la consola (prompts para correo, contraseña y código 2FA/OTP), o mediante una ventana temporal con GUI.
+- 🌐 **Dashboard Web en Vivo (Puerto 8080)**: Visualización en tiempo real desde cualquier dispositivo del estado del monitoreo, región, contador de chequeos y logs en vivo.
+- 📢 **Notificaciones por Discord**: Alertas en tiempo real sobre detección de stock, compras completadas y reportes de estado.
 
 ## Cómo Usarlo
 
@@ -23,14 +31,13 @@ Un bot automatizado creado en Python con Selenium para monitorear el stock de un
 
 Descarga el archivo `AmazonAutoCompra.exe` y haz doble clic en él.
 
-1. Selecciona el modo de ejecución:
-   - **N** (por defecto): Modo normal con ventana de Chrome para iniciar sesión visualmente.
-   - **S**: Modo Servidor Headless (sin ventana gráfica).
-2. Pega el enlace (URL) del artículo de Amazon y presiona ENTER.
-3. (Opcional) Pega la URL de tu Webhook de Discord para notificaciones.
-4. Si estás en modo normal, inicia sesión en la ventana de Chrome que se abrirá.
-5. Vuelve a la consola y presiona ENTER para comenzar el monitoreo.
-6. Abre tu navegador y accede a `http://localhost:8080` para ver el **Dashboard de Estado en Vivo**.
+1. **Selecciona la Región de Amazon**: Elige entre 1 y 10.
+2. **Selecciona el Modo Servidor Headless**: `S` para modo sin ventana gráfica o `N` para modo normal.
+3. **Selecciona el Modo Turbo Speed**: `S` para habilitar refresco ultrarrápido sub-segundo (<1s).
+4. **Ingresa el Enlace del Producto o ASIN**: Pega la URL del producto o su código ASIN (ej: `B08N5WRWNW`).
+5. **(Opcional) Webhook de Discord**: Pega tu URL de Webhook para recibir notificaciones.
+6. **Autenticación**: El bot verificará tu sesión. Si no estás logueado en modo Headless, podrás ingresar tus datos o abrir una ventana de login.
+7. ¡El monitoreo comenzará automáticamente a máxima velocidad! Abre `http://localhost:8080` para ver el Dashboard.
 
 ### Opción 2: Desde el código fuente
 
@@ -44,30 +51,17 @@ Descarga el archivo `AmazonAutoCompra.exe` y haz doble clic en él.
    python bot.py
    ```
 
-## 🔔 ¿Cómo obtener tu Webhook de Discord?
-
-Para recibir notificaciones en tu servidor de Discord:
-
-1. Abre **Discord** e ingresa a tu servidor (o crea uno propio gratis).
-2. Haz clic derecho en el canal de texto donde quieres recibir los avisos (ej: `#notificaciones`).
-3. Selecciona **Editar Canal** (icono de engranaje ⚙️).
-4. Ve a la pestaña **Integraciones** en el menú izquierdo.
-5. Haz clic en **Webhooks** ➔ **Crear Webhook** (o *Nuevo Webhook*).
-6. Haz clic en **Copiar URL del Webhook**.
-7. ¡Pega esa URL en la consola del bot cuando te la pida!
-
 ## Panel de Estado Web (Dashboard)
 
-Al iniciar el bot, se levantará automáticamente un servidor web en el puerto `8080`:
 - **URL Local**: `http://localhost:8080`
-- **URL Servidor Remote**: `http://<IP_DE_TU_SERVIDOR>:8080`
+- **URL Servidor Remoto**: `http://<IP_DE_TU_SERVIDOR>:8080`
 - **API Status JSON**: `http://localhost:8080/api/status`
 
 ## Requisitos
 
 - Google Chrome instalado en el sistema.
 - Conexión a internet estable.
-- Cuenta de Amazon con método de pago y dirección configurados.
+- Cuenta de Amazon con método de pago y dirección de envío predeterminadas.
 
 ## Advertencia
 
